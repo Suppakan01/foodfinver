@@ -20,13 +20,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // โหลดข้อมูลร้านอาหารเมื่อเข้าสู่หน้าจอหลัก
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<RestaurantProvider>(
-        context,
-        listen: false,
-      ).fetchRestaurants();
-    });
+    Future.microtask(
+      () =>
+          Provider.of<RestaurantProvider>(
+            context,
+            listen: false,
+          ).fetchRestaurants(),
+    );
   }
 
   //แสดงหน้าจอตาม tab ที่เลือก
@@ -109,20 +109,18 @@ class _HomeScreenState extends State<HomeScreen> {
   //สร้าง widget แสดงร้านแนะนำแบบสไลด์
   Widget _buildFeaturedRestaurants(List<RestaurantModel> restaurants) {
     //สุ่มเลือกร้านอาหาร 5 ร้านจากทั้งหมด (หรือน้อยกว่าถ้ามีไม่ถึง)
-    final featuredList =
-        restaurants.length <= 5
-              ? List.from(restaurants)
-              : List.from(restaurants)
-          ..shuffle()
-          ..sublist(0, 5);
+    final featuredList = List.from(restaurants);
+    featuredList.shuffle();
+    final displayList =
+        featuredList.length <= 5 ? featuredList : featuredList.sublist(0, 5);
 
     return Container(
       height: 200,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        itemCount: featuredList.length,
+        itemCount: displayList.length,
         itemBuilder: (context, index) {
-          return _buildFeaturedRestaurantItem(featuredList[index]);
+          return _buildFeaturedRestaurantItem(displayList[index]);
         },
       ),
     );

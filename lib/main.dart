@@ -19,7 +19,13 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // เริ่มต้น Firebase ด้วย options ที่กำหนด
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform)
+      .then((_) {
+        print("✅ Firebase Initialized");
+      })
+      .catchError((e) {
+        print("❌ Firebase Init Failed: $e");
+      });
 
   runApp(MyApp());
 }
