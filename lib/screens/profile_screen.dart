@@ -1,6 +1,3 @@
-// ไฟล์: lib/screens/profile_screen.dart
-// หน้าจอแสดงข้อมูลโปรไฟล์ผู้ใช้
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/restaurant_model.dart';
@@ -11,6 +8,7 @@ import 'edit_profile_screen.dart';
 import 'login_screen.dart';
 import 'restaurant_detail_screen.dart';
 
+// หน้าจอแสดงข้อมูลโปรไฟล์ผู้ใช้
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -54,7 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     // ดึงข้อมูลร้านโปรดจากรายการ ID ร้านโปรดของผู้ใช้
     _favoriteRestaurants = await restaurantProvider.getRestaurantsByIds(
-      authProvider.user!.favoriteRestaurants,
+      authProvider.currentUser!.favorites,
     );
 
     setState(() {
@@ -71,7 +69,7 @@ class _ProfileScreenState extends State<ProfileScreen>
       return _buildNotLoggedInScreen();
     }
 
-    final user = authProvider.user!;
+    final user = authProvider.currentUser!;
 
     return Scaffold(
       body: Column(
@@ -100,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                 // ชื่อผู้ใช้
                 Text(
-                  user.name,
+                  user.displayName,
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 5),
@@ -201,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               _buildInfoItem(
                 icon: Icons.person,
                 label: 'ชื่อ',
-                value: user.name,
+                value: user.displayName,
               ),
               _buildInfoItem(
                 icon: Icons.email,
@@ -223,7 +221,10 @@ class _ProfileScreenState extends State<ProfileScreen>
               _buildInfoItem(
                 icon: Icons.calendar_today,
                 label: 'วันที่สมัคร',
-                value: _formatDate(user.createdAt),
+                value:
+                    user.createdAt != null
+                        ? _formatDate(user.createdAt!)
+                        : 'ไม่ระบุ',
               ),
               _buildInfoItem(
                 icon: Icons.star,
@@ -233,7 +234,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               _buildInfoItem(
                 icon: Icons.favorite,
                 label: 'ร้านอาหารโปรด',
-                value: user.favoriteRestaurants.length.toString(),
+                value: user.favorites.length.toString(),
               ),
             ],
           ),

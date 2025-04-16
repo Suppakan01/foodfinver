@@ -5,6 +5,8 @@ import '../providers/auth_provider.dart';
 import '../models/restaurant_model.dart';
 import '../models/review_model.dart';
 
+import 'review_screen.dart'; // แก้ path ตามโครงสร้างโปรเจคของคุณ
+
 //หน้าจอแสดงรายละเอียดร้านอาหาร
 class RestaurantDetailScreen extends StatefulWidget {
   final String restaurantId;
@@ -37,17 +39,24 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       listen: false,
     );
 
-    //ดึงข้อมูลร้านอาหาร
-    _restaurant = await restaurantProvider.getRestaurantById(
-      widget.restaurantId,
-    );
-
-    //ดึงข้อมูลรีวิวของร้านอาหาร
-    if (_restaurant != null) {
-      _reviews = await restaurantProvider.getReviewsByRestaurantId(
+    try {
+      //ดึงข้อมูลร้านอาหาร
+      _restaurant = await restaurantProvider.getRestaurantById(
         widget.restaurantId,
       );
-    } else {
+
+      //ดึงข้อมูลรีวิวของร้านอาหาร
+      if (_restaurant != null) {
+        // แก้ไขจาก getReviewsByRestaurantId เป็น getRestaurantReviews
+        _reviews = await restaurantProvider.getRestaurantReviews(
+          widget.restaurantId,
+        );
+      } else {
+        _reviews = [];
+      }
+    } catch (e) {
+      print('Error loading restaurant data: $e');
+      _restaurant = null;
       _reviews = [];
     }
 
@@ -197,44 +206,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                           ),
                           SizedBox(height: 10),
 
-                          //เบอร์โทร
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.phone,
-                                color: Colors.grey[700],
-                                size: 20,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                _restaurant!.phoneNumber,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 10),
-
-                          //เวลาเปิด-ปิด
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.access_time,
-                                color: Colors.grey[700],
-                                size: 20,
-                              ),
-                              SizedBox(width: 8),
-                              Text(
-                                '${_restaurant!.openingHours} - ${_restaurant!.closingHours}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[800],
-                                ),
-                              ),
-                            ],
-                          ),
+                          // ลบ/ปรับส่วนของเบอร์โทร, เวลาเปิด-ปิด, และเมนูแนะนำ เนื่องจากไม่มีใน model
                           SizedBox(height: 25),
 
                           //รายละเอียดร้าน
@@ -252,110 +224,6 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                               fontSize: 16,
                               color: Colors.grey[800],
                               height: 1.4,
-                            ),
-                          ),
-                          SizedBox(height: 25),
-
-                          //เมนูแนะนำ
-                          Text(
-                            'เมนูแนะนำ',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Container(
-                            height: 120,
-                            child: ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: _restaurant!.recommendedMenu.length,
-                              itemBuilder: (context, index) {
-                                final menu =
-                                    _restaurant!.recommendedMenu[index];
-                                return Container(
-                                  width: 200,
-                                  margin: EdgeInsets.only(right: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.white,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        spreadRadius: 1,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          bottomLeft: Radius.circular(10),
-                                        ),
-                                        child: Image.network(
-                                          menu.imageUrl,
-                                          width: 80,
-                                          height: 120,
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (
-                                            context,
-                                            error,
-                                            stackTrace,
-                                          ) {
-                                            return Container(
-                                              width: 80,
-                                              height: 120,
-                                              color: Colors.grey[300],
-                                              child: Icon(
-                                                Icons.restaurant_menu,
-                                                size: 30,
-                                                color: Colors.grey[500],
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: EdgeInsets.all(10),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                menu.name,
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              SizedBox(height: 5),
-                                              Text(
-                                                '฿${menu.price}',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color:
-                                                      Theme.of(
-                                                        context,
-                                                      ).primaryColor,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
                             ),
                           ),
                           SizedBox(height: 25),

@@ -108,6 +108,23 @@ class RestaurantProvider with ChangeNotifier {
     return null;
   }
 
+  Future<List<RestaurantModel>> getRestaurantsByIds(List<String> ids) async {
+    List<RestaurantModel> results = [];
+
+    try {
+      for (String id in ids) {
+        RestaurantModel? restaurant = await getRestaurantById(id);
+        if (restaurant != null) {
+          results.add(restaurant);
+        }
+      }
+    } catch (e) {
+      print('เกิดข้อผิดพลาดในการดึงข้อมูลร้านอาหารจาก IDs: $e');
+    }
+
+    return results;
+  }
+
   //ดึงรีวิวทั้งหมดของร้านอาหาร
   Future<List<ReviewModel>> getRestaurantReviews(String restaurantId) async {
     try {
