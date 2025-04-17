@@ -8,25 +8,23 @@ class AuthProvider with ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // ตัวแปรสำหรับเก็บสถานะการโหลดข้อมูล
-  bool _isLoading = false;
+  bool _isLoading = false; //ตัวแปรสำหรับเก็บสถานะการโหลดข้อมูล
 
-  // ตัวแปรสำหรับเก็บข้อมูลผู้ใช้ปัจจุบัน
-  UserModel? _currentUser;
+  UserModel? _currentUser; // ตัวแปรสำหรับเก็บข้อมูลผู้ใช้ปัจจุบัน
 
-  // Getter สำหรับตรวจสอบว่ามีการลงชื่อเข้าใช้อยู่หรือไม่
-  bool get isLoggedIn => _auth.currentUser != null;
+  bool get isLoggedIn =>
+      _auth.currentUser !=
+      null; //Getter สำหรับตรวจสอบว่ามีการลงชื่อเข้าใช้อยู่หรือไม่
 
-  // Getter สำหรับตรวจสอบสถานะการโหลดข้อมูล
-  bool get isLoading => _isLoading;
+  bool get isLoading => _isLoading; //Getter สำหรับตรวจสอบสถานะการโหลดข้อมูล
 
-  // Getter สำหรับเรียกดูข้อมูลผู้ใช้ปัจจุบัน
-  UserModel? get currentUser => _currentUser;
+  UserModel? get currentUser =>
+      _currentUser; //Getter สำหรับเรียกดูข้อมูลผู้ใช้ปัจจุบัน
 
-  // Getter สำหรับเรียกดู uid ของผู้ใช้ปัจจุบัน
-  String? get uid => _auth.currentUser?.uid;
+  String? get uid =>
+      _auth.currentUser?.uid; //Getter สำหรับเรียกดู uid ของผู้ใช้ปัจจุบัน
 
-  // สร้าง constructor และตรวจสอบการเปลี่ยนแปลงของสถานะการลงชื่อเข้าใช้
+  //สร้าง constructor และตรวจสอบการเปลี่ยนแปลงของสถานะการลงชื่อเข้าใช้
   AuthProvider() {
     _auth.authStateChanges().listen((User? user) {
       if (user != null) {

@@ -35,21 +35,14 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _loadRecentSearches();
 
-    // เรียกข้อมูลร้านอาหารเมื่อเข้าหน้าค้นหา (ถ้าไม่มีข้อมูลในแคช)
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    Future.microtask(() async {
       final restaurantProvider = Provider.of<RestaurantProvider>(
         context,
         listen: false,
       );
-      if (restaurantProvider.restaurants.isEmpty) {
-        restaurantProvider.fetchRestaurants();
-      }
+      await restaurantProvider.loadRestaurantsFromJson();
     });
-
-    // เพิ่ม listener สำหรับการค้นหาทันที
-    _searchController.addListener(_onSearchChanged);
   }
 
   // โหลดประวัติการค้นหาล่าสุด (จริงๆ ควรใช้ SharedPreferences)

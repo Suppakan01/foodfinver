@@ -20,13 +20,14 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () =>
-          Provider.of<RestaurantProvider>(
-            context,
-            listen: false,
-          ).fetchRestaurants(),
-    );
+
+    Future.microtask(() async {
+      final restaurantProvider = Provider.of<RestaurantProvider>(
+        context,
+        listen: false,
+      );
+      await restaurantProvider.loadRestaurantsFromJson();
+    });
   }
 
   //แสดงหน้าจอตาม tab ที่เลือก

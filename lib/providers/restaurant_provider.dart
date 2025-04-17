@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/restaurant_model.dart';
 import '../models/review_model.dart';
+import 'dart:convert';
+import 'package:flutter/services.dart'; // สำหรับ rootBundle
 
 //จัดการข้อมูลร้านอาหารและการค้นหา
 class RestaurantProvider with ChangeNotifier {
@@ -25,7 +27,7 @@ class RestaurantProvider with ChangeNotifier {
   //Getter สำหรับเรียกดูผลการค้นหา
   List<RestaurantModel> get searchResults => _searchResults;
 
-  //ดึงข้อมูลร้านอาหารทั้งหมดจาก Firestore
+  /*//ดึงข้อมูลร้านอาหารทั้งหมดจาก Firestore
   Future<void> fetchRestaurants() async {
     _isLoading = true;
     notifyListeners();
@@ -42,6 +44,27 @@ class RestaurantProvider with ChangeNotifier {
           }).toList();
     } catch (e) {
       print('เกิดข้อผิดพลาดในการดึงข้อมูลร้านอาหาร: $e');
+    }
+
+    _isLoading = false;
+    notifyListeners();
+  }*/
+
+  Future<void> loadRestaurantsFromJson() async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      final jsonString = await rootBundle.loadString('assets/restaurant.json');
+      final jsonData = json.decode(jsonString);
+      final List<dynamic> results = jsonData['results'];
+
+      _restaurants =
+          results.cast<Map<String, dynamic>>().map((item) {
+            return RestaurantModel.fromJson(item);
+          }).toList();
+    } catch (e) {
+      print('❌ เกิดข้อผิดพลาดในการโหลด JSON: $e');
     }
 
     _isLoading = false;
