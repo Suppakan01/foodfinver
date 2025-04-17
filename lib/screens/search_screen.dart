@@ -47,7 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   // โหลดประวัติการค้นหาล่าสุด (จริงๆ ควรใช้ SharedPreferences)
   void _loadRecentSearches() {
-    // สมมติว่าใช้ข้อมูลนี้เป็นประวัติการค้นหา
+    //สมมติว่าใช้ข้อมูลนี้เป็นประวัติการค้นหา
     setState(() {
       _recentSearches = ['ส้มตำ', 'ชาบู', 'พิซซ่า', 'อาหารเกาหลี'];
     });
